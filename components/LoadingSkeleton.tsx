@@ -1,7 +1,7 @@
 export default function LoadingSkeleton({ type = 'card', count = 3 }: { type?: 'card' | 'header' | 'league'; count?: number }) {
   if (type === 'header') {
     return (
-      <div className="bg-card rounded-xl p-6 mb-4 animate-pulse">
+      <div className="bg-card rounded-xl p-6 mb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="skeleton w-16 h-16 rounded-full" />

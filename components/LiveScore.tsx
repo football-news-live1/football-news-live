@@ -1,11 +1,12 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ProcessedMatch } from '@/lib/types';
 import { getMatchStatusDisplay } from '@/lib/utils';
-import { LIVE_POLL_INTERVAL } from '@/lib/constants';
+import { getMsUntilNextUtcSlot } from '@/lib/constants';
 import LoadingSkeleton from './LoadingSkeleton';
 
 const fetcher = async (url: string) => {
@@ -20,13 +21,24 @@ interface LiveScoreProps {
 }
 
 export default function LiveScore({ leagueId }: LiveScoreProps = {}) {
+  // Calculate UTC-aligned refresh interval
+  const [refreshInterval, setRefreshInterval] = useState(() => getMsUntilNextUtcSlot());
+
+  // Re-calculate interval after each refresh to stay aligned
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setRefreshInterval(getMsUntilNextUtcSlot());
+    }, 60_000); // Re-check every minute
+    return () => clearInterval(timer);
+  }, []);
+
   const { data: liveMatches, isLoading } = useSWR<ProcessedMatch[]>(
     '/api/live',
     fetcher,
     {
-      refreshInterval: LIVE_POLL_INTERVAL,
+      refreshInterval,
       revalidateOnFocus: true,
-      dedupingInterval: 10000,
+      dedupingInterval: 30000,
     }
   );
 
@@ -85,8 +97,10 @@ export default function LiveScore({ leagueId }: LiveScoreProps = {}) {
                     src={match.homeTeam.logo}
                     alt={match.homeTeam.name}
                     fill
+                    sizes="28px"
                     className="object-contain"
-                    onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.png'; }}
+                    loading="lazy"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.webp'; }}
                   />
                 </div>
                 <span className="text-sm font-semibold text-white truncate">{match.homeTeam.name}</span>
@@ -103,8 +117,10 @@ export default function LiveScore({ leagueId }: LiveScoreProps = {}) {
                     src={match.awayTeam.logo}
                     alt={match.awayTeam.name}
                     fill
+                    sizes="28px"
                     className="object-contain"
-                    onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.png'; }}
+                    loading="lazy"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.webp'; }}
                   />
                 </div>
               </div>

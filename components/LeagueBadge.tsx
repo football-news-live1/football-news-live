@@ -23,7 +23,7 @@ export default function LeagueBadge({ name, logo, country, flag, round, size = '
           height={imgSize}
           className="object-contain"
           onError={(e) => {
-            (e.target as HTMLImageElement).src = '/images/league-placeholder.png';
+            (e.target as HTMLImageElement).src = '/images/league-placeholder.webp';
           }}
         />
       </div>

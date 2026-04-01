@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getMatchesByDate } from '@/lib/api';
+import { getCurrentUtcSlot } from '@/lib/constants';
 
 export const revalidate = 600;
 
@@ -17,11 +18,12 @@ export async function GET(_req: Request, { params }: Props) {
 
   try {
     const matches = await getMatchesByDate(date);
+    const utcSlot = getCurrentUtcSlot();
     return NextResponse.json(
-      { matches, date, timestamp: Date.now() },
+      { matches, date, timestamp: Date.now(), utcSlot },
       {
         headers: {
-          'Cache-Control': 's-maxage=600, stale-while-revalidate=1200',
+          'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=60',
         },
       }
     );

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getLiveMatches } from '@/lib/api';
+import { getCurrentUtcSlot } from '@/lib/constants';
 
 // Cache live scores for 10 minutes on server side
 export const revalidate = 600;
@@ -7,11 +8,12 @@ export const revalidate = 600;
 export async function GET() {
   try {
     const matches = await getLiveMatches();
+    const utcSlot = getCurrentUtcSlot();
     return NextResponse.json(
-      { matches, timestamp: Date.now() },
+      { matches, timestamp: Date.now(), utcSlot },
       {
         headers: {
-          'Cache-Control': 's-maxage=600, stale-while-revalidate=1200',
+          'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=60',
         },
       }
     );

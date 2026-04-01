@@ -31,8 +31,28 @@ export const LIVE_POLL_INTERVAL = 600 * 1000; // 10 minutes
 
 export const MATCHES_POLL_INTERVAL = 600 * 1000; // 10 minutes
 
-export const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'FootballLive';
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://footballlive.com';
+// UTC-aligned interval: API calls happen at :00, :10, :20, :30, :40, :50
+export const UTC_INTERVAL_MS = 600_000; // 10 minutes in ms
+
+/** Returns the current UTC slot number (increments every 10 minutes) */
+export function getCurrentUtcSlot(): number {
+  return Math.floor(Date.now() / UTC_INTERVAL_MS);
+}
+
+/** Returns ms until the next UTC 10-minute boundary */
+export function getMsUntilNextUtcSlot(): number {
+  const now = Date.now();
+  const nextSlot = (Math.floor(now / UTC_INTERVAL_MS) + 1) * UTC_INTERVAL_MS;
+  return Math.max(nextSlot - now, 1000); // minimum 1 second
+}
+
+export const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'Football News Live';
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://footballnewslive.online';
+
+// API Key Management
+export const MAX_REQUESTS_PER_KEY_PER_DAY = 95; // Leave 5 as buffer from 100 daily limit
+export const KEY_COOLDOWN_MS = 60_000;           // 1 minute cooldown on 429 rate limit
+export const MAX_RETRY_KEYS = 5;                  // Try up to 5 different keys before giving up (covers all free-tier keys)
 
 export const STATUS_LABELS: Record<string, string> = {
   'NS': 'Not Started',

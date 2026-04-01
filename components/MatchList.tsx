@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { ProcessedMatch } from '@/lib/types';
 import MatchCard from './MatchCard';
@@ -34,24 +34,25 @@ export default function MatchList({ matches }: MatchListProps) {
     );
   }
 
-  // Group by league maintaining priority order
-  const seenLeagues = new Map<number, LeagueGroup>();
-  for (const match of matches) {
-    if (!seenLeagues.has(match.league.id)) {
-      seenLeagues.set(match.league.id, {
-        leagueId: match.league.id,
-        leagueName: match.league.name,
-        leagueLogo: match.league.logo,
-        country: match.league.country,
-        flag: match.league.flag,
-        round: match.league.round,
-        matches: [],
-      });
+  // Group by league maintaining priority order — memoized
+  const leagueGroups = useMemo(() => {
+    const seenLeagues = new Map<number, LeagueGroup>();
+    for (const match of matches) {
+      if (!seenLeagues.has(match.league.id)) {
+        seenLeagues.set(match.league.id, {
+          leagueId: match.league.id,
+          leagueName: match.league.name,
+          leagueLogo: match.league.logo,
+          country: match.league.country,
+          flag: match.league.flag,
+          round: match.league.round,
+          matches: [],
+        });
+      }
+      seenLeagues.get(match.league.id)!.matches.push(match);
     }
-    seenLeagues.get(match.league.id)!.matches.push(match);
-  }
-
-  const leagueGroups = Array.from(seenLeagues.values());
+    return Array.from(seenLeagues.values());
+  }, [matches]);
 
   const toggleLeague = (leagueId: number) => {
     setCollapsedLeagues((prev) => {
@@ -63,7 +64,7 @@ export default function MatchList({ matches }: MatchListProps) {
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 match-list-container">
       {leagueGroups.map((group, groupIndex) => {
         const isCollapsed = collapsedLeagues.has(group.leagueId);
         return (
@@ -76,7 +77,9 @@ export default function MatchList({ matches }: MatchListProps) {
             {/* League Section */}
             <div
               id={`league-${group.leagueId}`}
-              className="rounded-xl overflow-hidden border border-white/5 bg-secondary/50"
+              className="rounded-xl overflow-hidden border border-white/5 bg-secondary/50 league-section"
+              role="region"
+              aria-label={`${group.leagueName} matches`}
             >
               {/* League Header */}
               <button

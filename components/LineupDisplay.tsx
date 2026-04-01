@@ -34,7 +34,7 @@ export default function LineupDisplay({ lineups }: LineupDisplayProps) {
                 alt={lineup.team.name}
                 fill
                 className="object-contain"
-                onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.png'; }}
+                onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.webp'; }}
               />
             </div>
             <div>

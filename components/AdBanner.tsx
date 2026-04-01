@@ -115,7 +115,7 @@ export default function AdBanner({ slot, index }: AdBannerProps) {
   // Sidebar ad
   if (slot === 'sidebar' || slot === 'match-sidebar') {
     return (
-      <div className="w-full">
+      <div className="w-full ad-container">
         <p className="text-gray-600 text-[10px] text-center mb-1 uppercase tracking-widest">Advertisement</p>
         <div
           id={adId}
@@ -134,7 +134,7 @@ export default function AdBanner({ slot, index }: AdBannerProps) {
 
   // Header, in-feed, match top/bottom ads
   return (
-    <div className="w-full my-1">
+    <div className="w-full my-1 ad-container">
       <p className="text-gray-600 text-[10px] text-center mb-1 uppercase tracking-widest">Advertisement</p>
       <div
         id={adId}

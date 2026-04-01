@@ -31,8 +31,10 @@ export default function MatchCard({ match, compact = false }: MatchCardProps) {
               src={match.homeTeam.logo}
               alt={`${match.homeTeam.name} logo`}
               fill
+              sizes="32px"
+              loading="lazy"
               className="object-contain"
-              onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.png'; }}
+              onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.webp'; }}
             />
           </div>
           <span className={`font-semibold text-white truncate ${compact ? 'text-xs' : 'text-sm'} md:text-right`}>
@@ -80,8 +82,10 @@ export default function MatchCard({ match, compact = false }: MatchCardProps) {
               src={match.awayTeam.logo}
               alt={`${match.awayTeam.name} logo`}
               fill
+              sizes="32px"
+              loading="lazy"
               className="object-contain"
-              onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.png'; }}
+              onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.webp'; }}
             />
           </div>
           <span className={`font-semibold text-white truncate ${compact ? 'text-xs' : 'text-sm'}`}>

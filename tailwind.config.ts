@@ -18,7 +18,8 @@ const config: Config = {
         'card-hover': '#243447',
       },
       fontFamily: {
-        sans: ['Inter', 'Poppins', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-poppins)', 'system-ui', 'sans-serif'],
         mono: ['Roboto Mono', 'monospace'],
       },
       animation: {

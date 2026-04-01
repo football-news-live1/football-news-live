@@ -14,7 +14,7 @@ export default function StandingsTable({ standings, highlightTeamIds }: Standing
     <div>
       <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
         <div className="relative w-5 h-5">
-          <Image src={group.logo} alt={group.name} fill className="object-contain" onError={(e) => { (e.target as HTMLImageElement).src = '/images/league-placeholder.png'; }} />
+          <Image src={group.logo} alt={group.name} fill className="object-contain" onError={(e) => { (e.target as HTMLImageElement).src = '/images/league-placeholder.webp'; }} />
         </div>
         {group.name} {group.season}/{String(group.season + 1).slice(2)}
       </h3>
@@ -49,7 +49,7 @@ export default function StandingsTable({ standings, highlightTeamIds }: Standing
                   <td className="py-2.5 px-2">
                     <div className="flex items-center gap-2">
                       <div className="relative w-5 h-5 flex-shrink-0">
-                        <Image src={row.team.logo} alt={row.team.name} fill className="object-contain" onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.png'; }} />
+                        <Image src={row.team.logo} alt={row.team.name} fill className="object-contain" onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.webp'; }} />
                       </div>
                       <span className={`font-medium truncate max-w-[120px] ${isHighlighted ? 'text-white' : 'text-gray-200'}`}>
                         {row.team.name}

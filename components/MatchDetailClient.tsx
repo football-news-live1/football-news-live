@@ -25,6 +25,8 @@ interface MatchDetailClientProps {
   // Admin-specific props
   isAdmin?: boolean;
   matchId?: number;
+  // Fallback data notice
+  isFallback?: boolean;
 }
 
 const TABS: { key: TabType; label: string; icon: string }[] = [
@@ -45,6 +47,7 @@ export default function MatchDetailClient({
   standings,
   isAdmin = false,
   matchId,
+  isFallback = false,
 }: MatchDetailClientProps) {
   const [activeTab, setActiveTab] = useState<TabType>('summary');
   const [showAdPopup, setShowAdPopup] = useState(false);
@@ -181,6 +184,13 @@ export default function MatchDetailClient({
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
+      {/* Fallback Data Notice */}
+      {isFallback && (
+        <div className="mb-4 flex items-center gap-3 bg-blue-500/10 border border-blue-500/30 rounded-xl px-4 py-2.5">
+          <span className="text-blue-400 text-sm">ℹ️ Limited data — match sourced from alternate provider. Events, lineups, and statistics may not be available.</span>
+        </div>
+      )}
+
       {/* Admin Bar */}
       {isAdmin && (
         <div className="mb-4 flex items-center gap-3 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-2.5">
@@ -211,7 +221,7 @@ export default function MatchDetailClient({
             {/* Competition */}
             <div className="flex items-center gap-3 px-6 py-3 bg-accent/20 border-b border-white/10">
               <div className="relative w-6 h-6">
-                <Image src={match.league.logo} alt={match.league.name} fill className="object-contain" onError={(e) => { (e.target as HTMLImageElement).src = '/images/league-placeholder.png'; }} />
+                <Image src={match.league.logo} alt={match.league.name} fill className="object-contain" onError={(e) => { (e.target as HTMLImageElement).src = '/images/league-placeholder.webp'; }} />
               </div>
               <span className="text-sm font-semibold text-white">{match.league.name}</span>
               <span className="text-xs text-gray-400">— {match.league.round}</span>
@@ -236,9 +246,10 @@ export default function MatchDetailClient({
                       src={match.homeTeam.logo}
                       alt={`${match.homeTeam.name} logo`}
                       fill
+                      sizes="96px"
                       className="object-contain drop-shadow-lg"
                       priority
-                      onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.png'; }}
+                      onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.webp'; }}
                     />
                   </div>
                   <h1 className="text-lg md:text-xl font-bold text-white text-center leading-tight">
@@ -265,7 +276,7 @@ export default function MatchDetailClient({
                   </div>
 
                   {/* Half-time score */}
-                  {fixture.score.halftime.home !== null && (
+                  {fixture?.score?.halftime?.home !== null && fixture?.score?.halftime?.home !== undefined && (
                     <p className="text-xs text-gray-500">
                       HT: {fixture.score.halftime.home} - {fixture.score.halftime.away}
                     </p>
@@ -279,9 +290,10 @@ export default function MatchDetailClient({
                       src={match.awayTeam.logo}
                       alt={`${match.awayTeam.name} logo`}
                       fill
+                      sizes="96px"
                       className="object-contain drop-shadow-lg"
                       priority
-                      onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.png'; }}
+                      onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.webp'; }}
                     />
                   </div>
                   <h2 className="text-lg md:text-xl font-bold text-white text-center leading-tight">

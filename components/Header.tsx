@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -13,6 +14,7 @@ const navLinks = [
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-50 bg-secondary/95 backdrop-blur-md border-b border-white/10 shadow-lg">
@@ -22,26 +24,32 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-2 group">
             <span className="text-2xl">⚽</span>
             <span className="text-xl font-bold font-['Poppins'] text-white group-hover:text-highlight transition-colors">
-              Football<span className="text-highlight">Live</span>
+              Football <span className="text-highlight">News Live</span>
             </span>
           </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1" role="navigation" aria-label="Main navigation">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200"
-              >
-                {link.label === 'Live' ? (
-                  <span className="flex items-center gap-1.5">
-                    <span className="live-dot w-2 h-2"></span>
-                    {link.label}
-                  </span>
-                ) : link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href.split('?')[0]));
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                    isActive ? 'text-highlight bg-highlight/10' : 'text-gray-300 hover:text-white hover:bg-white/10'
+                  }`}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {link.label === 'Live' ? (
+                    <span className="flex items-center gap-1.5">
+                      <span className="live-dot w-2 h-2"></span>
+                      {link.label}
+                    </span>
+                  ) : link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Right side */}

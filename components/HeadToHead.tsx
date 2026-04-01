@@ -77,7 +77,7 @@ export default function HeadToHead({ h2h, homeTeamId, awayTeamId }: HeadToHeadPr
               <span className="text-[11px] text-gray-500 w-20 flex-shrink-0">{formatDisplayDate(new Date(fixture.fixture.date))}</span>
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="relative w-6 h-6 flex-shrink-0">
-                  <Image src={fixture.teams.home.logo} alt={fixture.teams.home.name} fill className="object-contain" onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.png'; }} />
+                  <Image src={fixture.teams.home.logo} alt={fixture.teams.home.name} fill className="object-contain" onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.webp'; }} />
                 </div>
                 <span className={`text-xs font-medium truncate ${homeWon ? 'text-white' : 'text-gray-400'}`}>{fixture.teams.home.name}</span>
               </div>
@@ -89,7 +89,7 @@ export default function HeadToHead({ h2h, homeTeamId, awayTeamId }: HeadToHeadPr
               <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
                 <span className={`text-xs font-medium truncate ${awayWon ? 'text-white' : 'text-gray-400'}`}>{fixture.teams.away.name}</span>
                 <div className="relative w-6 h-6 flex-shrink-0">
-                  <Image src={fixture.teams.away.logo} alt={fixture.teams.away.name} fill className="object-contain" onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.png'; }} />
+                  <Image src={fixture.teams.away.logo} alt={fixture.teams.away.name} fill className="object-contain" onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.webp'; }} />
                 </div>
               </div>
             </div>

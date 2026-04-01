@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import { ProcessedMatch } from '@/lib/types';
 import { formatDate, getDateForFilter, formatDisplayDate } from '@/lib/utils';
@@ -8,6 +8,7 @@ import MatchList from './MatchList';
 import LoadingSkeleton from './LoadingSkeleton';
 import AdBanner from './AdBanner';
 import StandingsWidget from './StandingsWidget';
+import { getMsUntilNextUtcSlot } from '@/lib/constants';
 
 type Filter = 'yesterday' | 'today' | 'tomorrow';
 
@@ -27,6 +28,16 @@ const fetcher = async (url: string) => {
 export default function MatchListWrapper({ initialMatches, initialDate, leagueId }: MatchListWrapperProps = {} as MatchListWrapperProps) {
   const [activeFilter, setActiveFilter] = useState<Filter>('today');
 
+  // UTC-aligned refresh interval
+  const [refreshInterval, setRefreshInterval] = useState(() => getMsUntilNextUtcSlot());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setRefreshInterval(getMsUntilNextUtcSlot());
+    }, 60_000);
+    return () => clearInterval(timer);
+  }, []);
+
   const selectedDate = formatDate(getDateForFilter(activeFilter));
 
   const { data: matches, isLoading } = useSWR<ProcessedMatch[]>(
@@ -34,7 +45,7 @@ export default function MatchListWrapper({ initialMatches, initialDate, leagueId
     fetcher,
     {
       fallbackData: activeFilter === 'today' ? initialMatches : undefined,
-      refreshInterval: 600000,
+      refreshInterval,
       revalidateOnFocus: false,
     }
   );

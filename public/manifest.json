@@ -1,14 +1,15 @@
 {
-  "name": "FootballLive",
-  "short_name": "FL",
-  "description": "Live football scores, fixtures and results",
+  "name": "Football News Live",
+  "short_name": "FNL",
+  "description": "Live football scores, fixtures, results and match statistics from 100+ leagues worldwide",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1a1a2e",
   "theme_color": "#1a1a2e",
+  "orientation": "portrait-primary",
   "icons": [
     { "src": "/favicon-32x32.png", "sizes": "32x32", "type": "image/png" },
     { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
   ],
-  "categories": ["sports", "news"]
+  "categories": ["sports", "news", "football", "entertainment"]
 }

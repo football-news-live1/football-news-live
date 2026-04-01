@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     description: meta.description,
     url: meta.canonical,
     type: 'website',
-    images: [{ url: meta.ogImage, width: 1200, height: 630, alt: 'FootballLive' }],
+    images: [{ url: meta.ogImage, width: 1200, height: 630, alt: 'Football News Live' }],
   },
   twitter: {
     card: 'summary_large_image',

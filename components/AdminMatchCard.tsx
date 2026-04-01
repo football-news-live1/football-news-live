@@ -34,7 +34,7 @@ export default function AdminMatchCard({ match, customLink }: AdminMatchCardProp
               alt={`${match.homeTeam.name} logo`}
               fill
               className="object-contain"
-              onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.png'; }}
+              onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.webp'; }}
             />
           </div>
           <span className="font-semibold text-white truncate text-sm md:text-right">
@@ -74,7 +74,7 @@ export default function AdminMatchCard({ match, customLink }: AdminMatchCardProp
               alt={`${match.awayTeam.name} logo`}
               fill
               className="object-contain"
-              onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.png'; }}
+              onError={(e) => { (e.target as HTMLImageElement).src = '/images/team-placeholder.webp'; }}
             />
           </div>
           <span className="font-semibold text-white truncate text-sm">
