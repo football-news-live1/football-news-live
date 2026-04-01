@@ -10,29 +10,37 @@ if (!(globalThis as any)._linksCache) {
   (globalThis as any)._linksCache = null;
 }
 
-import { kv } from '@vercel/kv';
+const DB_URL = 'https://api.restful-api.dev/objects/ff8081819d3fcc30019d4ac5cd64131d';
 
 /**
- * Robust async read algorithm pulling from Vercel KV (shared edge database)
+ * Read from the 100% free, zero-config global database across Vercel edge instances instantly
  */
 export async function readLinks(): Promise<Record<string, string>> {
   try {
-    const data = await kv.get<Record<string, string>>('watch-links');
-    return data || {};
+    const res = await fetch(DB_URL, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      return json?.data?.watchLinks || {};
+    }
+    return {};
   } catch (err) {
-    console.error('Vercel KV read error:', err);
+    console.error('Database read error:', err);
     return {};
   }
 }
 
 /**
- * Robust async write algorithm pushing updates globally to Vercel KV database
+ * Write links changes out globally
  */
 export async function writeLinks(links: Record<string, string>): Promise<void> {
   try {
-    await kv.set('watch-links', links);
+    await fetch(DB_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: 'linksDb', data: { watchLinks: links } }),
+    });
   } catch (err) {
-    console.error('Vercel KV write error:', err);
+    console.error('Database write error:', err);
   }
 }
 
