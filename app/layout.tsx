@@ -3,6 +3,7 @@ import '../styles/globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AdBanner from '@/components/AdBanner';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: {
@@ -52,6 +53,15 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        
+        {/* Monetag Multitag Script */}
+        <Script 
+          src="https://quge5.com/88/tag.min.js" 
+          data-zone="225512" 
+          data-cfasync="false" 
+          strategy="afterInteractive" 
+          async 
+        />
       </head>
       <body className="bg-primary min-h-screen flex flex-col">
         <Header />
