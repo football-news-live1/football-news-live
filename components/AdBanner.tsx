@@ -1,152 +1,119 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 interface AdBannerProps {
   slot: 'header' | 'sidebar' | 'in-feed' | 'match-top' | 'match-bottom' | 'match-sidebar' | 'social-bar' | 'popup';
   index?: number;
 }
 
-const slotConfig: Record<AdBannerProps['slot'], { id: string; label: string; desktopSize: string; mobileSize: string; delay?: number }> = {
-  'header': {
-    id: 'ad-header-banner',
-    label: 'Advertisement',
-    desktopSize: '728x90',
-    mobileSize: '320x50',
-  },
-  'sidebar': {
-    id: 'ad-sidebar',
-    label: 'Advertisement',
-    desktopSize: '300x250',
-    mobileSize: '300x250',
-  },
-  'in-feed': {
-    id: 'ad-in-feed',
-    label: 'Advertisement',
-    desktopSize: '728x90',
-    mobileSize: '300x250',
-  },
-  'match-top': {
-    id: 'ad-match-top',
-    label: 'Advertisement',
-    desktopSize: '728x90',
-    mobileSize: '320x50',
-  },
-  'match-bottom': {
-    id: 'ad-match-bottom',
-    label: 'Advertisement',
-    desktopSize: '728x90',
-    mobileSize: '300x250',
-  },
-  'match-sidebar': {
-    id: 'ad-match-sidebar',
-    label: 'Advertisement',
-    desktopSize: '300x250',
-    mobileSize: '300x250',
-  },
-  'social-bar': {
-    id: 'ad-social-bar',
-    label: '',
-    desktopSize: '0x0',
-    mobileSize: '0x0',
-    delay: 5000,
-  },
-  'popup': {
-    id: 'ad-popup',
-    label: 'Advertisement',
-    desktopSize: '300x250',
-    mobileSize: '300x250',
-  },
+const ADSTERRA_KEYS = {
+  '300x250': { key: 'f76c72acd4caee569bb791c097b9370c', width: 300, height: 250 },
+  '320x50': { key: '272197337e0a8c8be73158458e01bff2', width: 320, height: 50 },
+  '728x90': { key: '25a86e09eca788c146e5cacf12bf9f43', width: 728, height: 90 },
+  '160x300': { key: '72edf621ede50d11930e3027053048ae', width: 160, height: 300 },
+  '468x60': { key: 'a22b63ea13ae4def4df2082e0b6f1b6b', width: 468, height: 60 },
+  '160x600': { key: 'fc02000e1bc4d74499476acf46488137', width: 160, height: 600 },
+};
+
+const slotConfig: Record<AdBannerProps['slot'], { id: string; desktopFormat: keyof typeof ADSTERRA_KEYS; mobileFormat: keyof typeof ADSTERRA_KEYS }> = {
+  'header': { id: 'ad-header', desktopFormat: '728x90', mobileFormat: '320x50' },
+  'sidebar': { id: 'ad-sidebar', desktopFormat: '300x250', mobileFormat: '300x250' },
+  'in-feed': { id: 'ad-in-feed', desktopFormat: '728x90', mobileFormat: '300x250' },
+  'match-top': { id: 'ad-match-top', desktopFormat: '728x90', mobileFormat: '320x50' },
+  'match-bottom': { id: 'ad-match-bottom', desktopFormat: '728x90', mobileFormat: '300x250' },
+  'match-sidebar': { id: 'ad-match-sidebar', desktopFormat: '300x250', mobileFormat: '300x250' },
+  'social-bar': { id: 'ad-social-bar', desktopFormat: '320x50', mobileFormat: '320x50' },
+  'popup': { id: 'ad-popup', desktopFormat: '300x250', mobileFormat: '300x250' },
 };
 
 export default function AdBanner({ slot, index }: AdBannerProps) {
   const config = slotConfig[slot];
-  const adRef = useRef<HTMLDivElement>(null);
-  const adId = index !== undefined ? `${config.id}-${index}` : config.id;
+  const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const loadAd = () => {
-      if (!adRef.current) return;
-
-      // ============================================================
-      // AD INTEGRATION ZONE
-      // ============================================================
-      // To add your ad code, find the slot you want to fill below
-      // and paste the ad network's script/code inside the div.
-      //
-      // ADSTERRA Example:
-      //   const script = document.createElement('script');
-      //   script.src = 'https://www.highperformanceformat.com/YOUR_KEY/invoke.js';
-      //   script.setAttribute('key', 'YOUR_AD_KEY');
-      //   adRef.current.appendChild(script);
-      //
-      // MONETAG Example:
-      //   const script = document.createElement('script');
-      //   script.src = 'https://alwingulla.com/88/tag.min.js';
-      //   script.dataset.zone = 'YOUR_ZONE_ID';
-      //   adRef.current.appendChild(script);
-      //
-      // GOOGLE ADSENSE Example:
-      //   const ins = document.createElement('ins');
-      //   ins.className = 'adsbygoogle';
-      //   ins.dataset.adClient = 'ca-pub-YOUR_ID';
-      //   ins.dataset.adSlot = 'YOUR_SLOT_ID';
-      //   adRef.current.appendChild(ins);
-      //   (window as any).adsbygoogle?.push({});
-      // ============================================================
-
-      // Placeholder display (remove when real ads are added)
-      // The div#${adId} is ready for your ad code
+    setMounted(true);
+    setIsMobile(window.innerWidth < 768);
+    
+    // Some basic debounced resize listener just in case
+    let timeout: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => setIsMobile(window.innerWidth < 768), 100);
     };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-    if (config.delay) {
-      const timer = setTimeout(loadAd, config.delay);
-      return () => clearTimeout(timer);
-    } else {
-      loadAd();
-    }
-  }, [config.delay, adId]);
+  const adId = index !== undefined ? `${config.id}-${index}` : config.id;
 
-  // Social bar / interstitial - invisible container
+  // Render safe popunder container block specifically for interstitial
   if (slot === 'social-bar') {
-    return <div id={adId} ref={adRef} aria-hidden="true" className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none" />;
+    return null;
   }
 
-  // Sidebar ad
-  if (slot === 'sidebar' || slot === 'match-sidebar') {
+  // Prevent hydration mismatch by blocking render until mounted
+  if (!mounted) {
+    const desktopData = ADSTERRA_KEYS[config.desktopFormat];
     return (
-      <div className="w-full ad-container">
+      <div className="w-full ad-container my-2 flex flex-col items-center justify-center">
         <p className="text-gray-600 text-[10px] text-center mb-1 uppercase tracking-widest">Advertisement</p>
-        <div
-          id={adId}
-          ref={adRef}
-          className="ad-placeholder w-full"
-          style={{ minHeight: '250px' }}
-          role="complementary"
-          aria-label="Advertisement"
-        >
-          <span className="text-xs text-gray-600">300×250</span>
-          <span className="text-[10px] text-gray-700 mt-1">Ad space available</span>
-        </div>
+        <div id={adId} className="ad-placeholder w-full flex justify-center bg-secondary/30 rounded" style={{ minHeight: `${desktopData.height}px` }} />
       </div>
     );
   }
 
-  // Header, in-feed, match top/bottom ads
+  const formatKey = isMobile ? config.mobileFormat : config.desktopFormat;
+  const adData = ADSTERRA_KEYS[formatKey];
+
+  if (!adData) return null;
+
+  // We utilize an iframe srcDoc because Adsterra scripts heavily rely on `document.write`. 
+  // Document.write entirely wipes out React single-page-applications when called asynchronously.
+  // The iframe naturally isolates the execution and renders the contents perfectly inline.
+  const srcDoc = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: transparent; overflow: hidden; }
+      </style>
+    </head>
+    <body style="background: transparent;">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '${adData.key}',
+          'format' : 'iframe',
+          'height' : ${adData.height},
+          'width' : ${adData.width},
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="https://www.highperformanceformat.com/${adData.key}/invoke.js"></script>
+    </body>
+    </html>
+  `;
+
   return (
-    <div className="w-full my-1 ad-container">
+    <div className="w-full ad-container my-2 flex flex-col items-center justify-center">
       <p className="text-gray-600 text-[10px] text-center mb-1 uppercase tracking-widest">Advertisement</p>
-      <div
-        id={adId}
-        ref={adRef}
-        className="ad-placeholder w-full rounded"
-        style={{ minHeight: slot === 'header' ? '50px' : '90px' }}
-        role="complementary"
-        aria-label="Advertisement"
+      <div 
+        id={adId} 
+        className="ad-placeholder w-full flex justify-center" 
+        style={{ minHeight: `${adData.height}px` }}
       >
-        <span className="text-xs text-gray-600 hide-mobile">{config.desktopSize}</span>
-        <span className="text-xs text-gray-600 hide-desktop">{config.mobileSize}</span>
-        <span className="text-[10px] text-gray-700 mt-1">Ad space available</span>
+        <iframe
+          srcDoc={srcDoc}
+          width={adData.width}
+          height={adData.height}
+          frameBorder="0"
+          scrolling="no"
+          style={{ border: 'none', overflow: 'hidden', background: 'transparent' }}
+          title={'Advertisement ' + formatKey}
+          sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin"
+        />
       </div>
     </div>
   );
