@@ -6,7 +6,7 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: { matchId: string } }
 ) {
-  const links = readLinks();
+  const links = await readLinks();
   const url = links[params.matchId] || null;
   return NextResponse.json({ url }, {
     headers: {

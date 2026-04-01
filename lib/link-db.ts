@@ -10,56 +10,29 @@ if (!(globalThis as any)._linksCache) {
   (globalThis as any)._linksCache = null;
 }
 
+import { kv } from '@vercel/kv';
+
 /**
- * Robust read algorithm prioritizing memory, then /tmp, then local
+ * Robust async read algorithm pulling from Vercel KV (shared edge database)
  */
-export function readLinks(): Record<string, string> {
-  const cache = (globalThis as any)._linksCache;
-  if (cache) return { ...cache };
-
-  let content = null;
+export async function readLinks(): Promise<Record<string, string>> {
   try {
-    if (fs.existsSync(TMP_DATA_FILE)) {
-      content = fs.readFileSync(TMP_DATA_FILE, 'utf-8');
-    } else if (fs.existsSync(LOCAL_DATA_FILE)) {
-      content = fs.readFileSync(LOCAL_DATA_FILE, 'utf-8');
-    }
-    
-    if (content) {
-      const parsed = JSON.parse(content);
-      (globalThis as any)._linksCache = parsed;
-      return parsed;
-    }
+    const data = await kv.get<Record<string, string>>('watch-links');
+    return data || {};
   } catch (err) {
-    console.error('Failed reading links DB', err);
+    console.error('Vercel KV read error:', err);
+    return {};
   }
-
-  return {};
 }
 
 /**
- * Robust write algorithm prioritizing /tmp, then local, then memory
+ * Robust async write algorithm pushing updates globally to Vercel KV database
  */
-export function writeLinks(links: Record<string, string>): void {
-  // Always update in-memory cache instantly
-  (globalThis as any)._linksCache = { ...links };
-
-  const dataStr = JSON.stringify(links, null, 2);
-
-  // Attempt to write to /tmp/ (Works in Vercel Serverless)
+export async function writeLinks(links: Record<string, string>): Promise<void> {
   try {
-    fs.writeFileSync(TMP_DATA_FILE, dataStr, 'utf-8');
+    await kv.set('watch-links', links);
   } catch (err) {
-    console.warn('Could not write to /tmp:', err);
-  }
-
-  // Attempt to write to Local JSON if running locally in dev mode
-  try {
-    const dir = path.dirname(LOCAL_DATA_FILE);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    // This will throw EROFS on Vercel, which gets caught silently
-    fs.writeFileSync(LOCAL_DATA_FILE, dataStr, 'utf-8');
-  } catch (err) {
-    // Expected on Vercel production
+    console.error('Vercel KV write error:', err);
   }
 }
+

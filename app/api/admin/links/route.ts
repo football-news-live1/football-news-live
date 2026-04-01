@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   if (!isAuthenticated(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const links = readLinks();
+  const links = await readLinks();
   return NextResponse.json({ links });
 }
 
@@ -32,9 +32,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'url is required' }, { status: 400 });
     }
 
-    const links = readLinks();
+    const links = await readLinks();
     links[matchId] = url;
-    writeLinks(links);
+    await writeLinks(links);
 
     return NextResponse.json({ success: true, matchId, url });
   } catch (err: any) {
@@ -56,9 +56,9 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'matchId is required' }, { status: 400 });
     }
 
-    const links = readLinks();
+    const links = await readLinks();
     delete links[matchId];
-    writeLinks(links);
+    await writeLinks(links);
 
     return NextResponse.json({ success: true, matchId });
   } catch {
