@@ -1,0 +1,44 @@
+﻿
+> footballlive@1.0.0 build
+> next build
+
+  Γû▓ Next.js 14.2.3
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/12) ...
+   Generating static pages (3/12) 
+   Generating static pages (6/12) 
+   Generating static pages (9/12) 
+ Γ£ô Generating static pages (12/12)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+Γöî Γùï /                                    145 B           116 kB
+Γö£ Γùï /_not-found                          145 B          87.1 kB
+Γö£ ╞Æ /[slug]                              144 B           116 kB
+Γö£ ╞Æ /api/admin/auth                      0 B                0 B
+Γö£ ╞Æ /api/admin/links                     0 B                0 B
+Γö£ Γùï /api/live                            0 B                0 B
+Γö£ ╞Æ /api/matches/[date]                  0 B                0 B
+Γö£ ╞Æ /api/revalidate                      0 B                0 B
+Γö£ ╞Æ /api/watch-link/[matchId]            0 B                0 B
+Γö£ ╞Æ /match/[id]                          142 B           114 kB
+Γö£ Γùï /panel-br                            1.52 kB        88.5 kB
+Γö£ Γùï /panel-br/dashboard                  3.52 kB         114 kB
+Γö£ ╞Æ /panel-br/match/[id]                 142 B           114 kB
+Γö£ Γùï /robots.txt                          0 B                0 B
+Γöö Γùï /sitemap.xml                         0 B                0 B
++ First Load JS shared by all            87 kB
+  Γö£ chunks/23-4270ac7a030cada1.js        31.5 kB
+  Γö£ chunks/fd9d1056-60c4a09e221073ac.js  53.6 kB
+  Γöö other shared chunks (total)          1.89 kB
+
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+
