@@ -1,29 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 import { ADMIN_TOKEN, COOKIE_NAME } from '@/lib/admin-config';
-const DATA_FILE = path.join(process.cwd(), 'data', 'watch-links.json');
+import { readLinks, writeLinks } from '@/lib/link-db';
 
 function isAuthenticated(request: NextRequest): boolean {
   const token = request.cookies.get(COOKIE_NAME)?.value;
   return token === ADMIN_TOKEN;
-}
-
-function readLinks(): Record<string, string> {
-  try {
-    if (!fs.existsSync(DATA_FILE)) {
-      fs.writeFileSync(DATA_FILE, '{}', 'utf-8');
-      return {};
-    }
-    const content = fs.readFileSync(DATA_FILE, 'utf-8');
-    return JSON.parse(content);
-  } catch {
-    return {};
-  }
-}
-
-function writeLinks(links: Record<string, string>): void {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(links, null, 2), 'utf-8');
 }
 
 // GET — return all custom links
@@ -56,8 +37,9 @@ export async function POST(request: NextRequest) {
     writeLinks(links);
 
     return NextResponse.json({ success: true, matchId, url });
-  } catch {
-    return NextResponse.json({ error: 'Bad request' }, { status: 400 });
+  } catch (err: any) {
+    console.error('Error in POST /api/admin/links:', err);
+    return NextResponse.json({ error: 'Bad request: ' + (err?.message || 'Unknown error') }, { status: 400 });
   }
 }
 
