@@ -86,13 +86,17 @@ export function processFixture(fixture: Fixture): ProcessedMatch {
 
 export function sortMatchesByLeaguePriority(matches: ProcessedMatch[]): ProcessedMatch[] {
   return [...matches].sort((a, b) => {
-    const priorityA = LEAGUE_PRIORITY[a.league.id] ?? 9999;
-    const priorityB = LEAGUE_PRIORITY[b.league.id] ?? 9999;
-    if (priorityA !== priorityB) return priorityA - priorityB;
-    // Lives first within same league
+    // 1. Prioritize LIVE matches above everything else
     const aLive = isLive(a.statusShort) ? 0 : 1;
     const bLive = isLive(b.statusShort) ? 0 : 1;
     if (aLive !== bLive) return aLive - bLive;
+
+    // 2. Then sort by league priority
+    const priorityA = LEAGUE_PRIORITY[a.league.id] ?? 9999;
+    const priorityB = LEAGUE_PRIORITY[b.league.id] ?? 9999;
+    if (priorityA !== priorityB) return priorityA - priorityB;
+
+    // 3. Finally sort by kickoff time
     return a.timestamp - b.timestamp;
   });
 }

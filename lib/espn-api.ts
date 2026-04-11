@@ -30,9 +30,12 @@ const cache = new Map<string, { data: ProcessedMatch[]; slot: number }>();
 function mapESPNStatusToShort(espnStatusName: string): string {
   switch (espnStatusName) {
     case 'STATUS_SCHEDULED': return 'NS';
-    case 'STATUS_IN_PROGRESS': return '1H'; // Will adjust based on time if needed
+    case 'STATUS_IN_PROGRESS':
+    case 'STATUS_FIRST_HALF': return '1H';
     case 'STATUS_HALFTIME': return 'HT';
     case 'STATUS_SECOND_HALF': return '2H';
+    case 'STATUS_EXTRA_TIME': return 'ET';
+    case 'STATUS_PENALTY_SHOOTOUT': return 'P';
     case 'STATUS_FULL_TIME':
     case 'STATUS_FINAL': return 'FT';
     case 'STATUS_CANCELED': return 'CANC';

@@ -25,14 +25,12 @@ export const LEAGUE_PRIORITY: Record<number, number> = {
 
 export const API_BASE_URL = 'https://v3.football.api-sports.io';
 
-export const CACHE_DURATION = 600 * 1000; // 10 minutes in ms
+export const CACHE_DURATION = 60 * 1000; // 1 minute in ms
+export const LIVE_POLL_INTERVAL = 30 * 1000; // 30 seconds
+export const MATCHES_POLL_INTERVAL = 60 * 1000; // 1 minute
 
-export const LIVE_POLL_INTERVAL = 600 * 1000; // 10 minutes
-
-export const MATCHES_POLL_INTERVAL = 600 * 1000; // 10 minutes
-
-// UTC-aligned interval: API calls happen at :00, :10, :20, :30, :40, :50
-export const UTC_INTERVAL_MS = 600_000; // 10 minutes in ms
+// UTC-aligned interval for deterministic caching if needed
+export const UTC_INTERVAL_MS = 60_000; // 1 minute in ms
 
 /** Returns the current UTC slot number (increments every 10 minutes) */
 export function getCurrentUtcSlot(): number {

@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import useSWR from 'swr';
+import { useSearchParams } from 'next/navigation';
 import { ProcessedMatch } from '@/lib/types';
-import { formatDate, getDateForFilter, formatDisplayDate } from '@/lib/utils';
+import { formatDate, getDateForFilter, formatDisplayDate, isLive } from '@/lib/utils';
 import MatchList from './MatchList';
 import LoadingSkeleton from './LoadingSkeleton';
 import AdBanner from './AdBanner';
@@ -27,6 +28,8 @@ const fetcher = async (url: string) => {
 
 export default function MatchListWrapper({ initialMatches, initialDate, leagueId }: MatchListWrapperProps = {} as MatchListWrapperProps) {
   const [activeFilter, setActiveFilter] = useState<Filter>('today');
+  const searchParams = useSearchParams();
+  const liveOnly = searchParams.get('filter') === 'live';
 
   // UTC-aligned refresh interval
   const [refreshInterval, setRefreshInterval] = useState(() => getMsUntilNextUtcSlot());
@@ -57,7 +60,11 @@ export default function MatchListWrapper({ initialMatches, initialDate, leagueId
   ];
 
   const filteredMatches = matches
-    ? (leagueId ? matches.filter(m => m.league.id === leagueId) : matches)
+    ? matches.filter(m => {
+        const matchesLeague = !leagueId || m.league.id === leagueId;
+        const matchesLive = !liveOnly || isLive(m.statusShort);
+        return matchesLeague && matchesLive;
+      })
     : [];
 
   return (

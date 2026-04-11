@@ -6,7 +6,7 @@ import SchemaMarkup from '@/components/SchemaMarkup';
 import LiveScore from '@/components/LiveScore';
 import MatchListWrapper from '@/components/MatchListWrapper';
 
-export const revalidate = 600;
+export const revalidate = 60;
 
 const meta = getHomepageMeta();
 

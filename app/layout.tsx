@@ -144,6 +144,30 @@ export default function RootLayout({
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
+
+        {/* Monetag MultiTag (Optimized for Revenue: Popunder, Vignette, Push) */}
+        <Script
+          id="monetag-multitag"
+          src="https://quge5.com/88/tag.min.js"
+          data-zone="225513"
+          strategy="afterInteractive"
+          data-cfasync="false"
+        />
+
+        {/* Monetag Service Worker Registration */}
+        <Script id="register-sw" strategy="afterInteractive">
+          {`
+            if ('serviceWorker' in navigator) {
+              try {
+                navigator.serviceWorker.register('/sw.js').catch(function(err) {
+                  // Gracefully handle SW registration failure
+                });
+              } catch (e) {
+                // Ignore registration errors
+              }
+            }
+          `}
+        </Script>
       </head>
       <body className="bg-primary min-h-screen flex flex-col">
         <Header />

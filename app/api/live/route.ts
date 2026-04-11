@@ -3,7 +3,7 @@ import { getLiveMatches } from '@/lib/api';
 import { getCurrentUtcSlot } from '@/lib/constants';
 
 // Cache live scores for 10 minutes on server side
-export const revalidate = 600;
+export const revalidate = 30;
 
 export async function GET() {
   try {

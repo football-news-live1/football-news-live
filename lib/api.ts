@@ -351,30 +351,36 @@ export async function getStandings(
  * 3. api-football.com (Tertiary)
  */
 export async function getLiveMatches(): Promise<ProcessedMatch[]> {
+  let allMatches: ProcessedMatch[] = [];
+
+  // 1. Try ESPN first (Primary)
   try {
-    // 1. Try ESPN first
-    console.log(`[API] Fetching LIVE matches from ESPN (Primary)`);
     const espnMatches = await getESPNLiveMatches();
-    return espnMatches;
-  } catch (espnError) {
-    console.warn(`[API] ESPN failed for live matches, failing over to football-data.org (Secondary)`, espnError);
-    
-    // 2. Try football-data.org
-    try {
-      return await getFallbackLiveMatches();
-    } catch (fallbackError) {
-      console.warn(`[API] football-data.org failed for live matches, failing over to api-football.com (Tertiary)`, fallbackError);
-      
-      // 3. Try api-football
-      try {
-        const data = await apiFetch<Fixture>('/fixtures?live=all');
-        const processed = data.response.map(processFixture);
-        return sortMatchesByLeaguePriority(processed);
-      } catch (finalError) {
-        console.error('getLiveMatches all providers failed:', finalError);
-        return [];
-      }
+    if (espnMatches.length > 0) {
+      return espnMatches;
     }
+  } catch (espnError) {
+    console.warn(`[API] ESPN failed for live matches`, espnError);
+  }
+
+  // 2. Try football-data.org (Secondary) if ESPN has nothing
+  try {
+    const fallbackMatches = await getFallbackLiveMatches();
+    if (fallbackMatches.length > 0) {
+      return fallbackMatches;
+    }
+  } catch (fallbackError) {
+    console.warn(`[API] football-data.org failed for live matches`, fallbackError);
+  }
+
+  // 3. Try api-football (Tertiary) - this covers almost everything
+  try {
+    const data = await apiFetch<Fixture>('/fixtures?live=all');
+    const processed = data.response.map(processFixture);
+    return sortMatchesByLeaguePriority(processed);
+  } catch (finalError) {
+    console.error('getLiveMatches all providers failed:', finalError);
+    return [];
   }
 }
 

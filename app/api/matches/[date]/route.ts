@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getMatchesByDate } from '@/lib/api';
 import { getCurrentUtcSlot } from '@/lib/constants';
 
-export const revalidate = 600;
+export const revalidate = 60;
 
 interface Props {
   params: { date: string };
